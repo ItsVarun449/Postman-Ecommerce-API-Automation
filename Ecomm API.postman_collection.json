@@ -1,0 +1,257 @@
+{
+  "info": {
+    "_postman_id": "e2e50a52-cc37-4d03-b772-cbcf97c155e1",
+    "name": "Ecomm API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "22334959"
+  },
+  "item": [
+    {
+      "name": "Login API",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let jsonData = pm.response.json();\r",
+              "pm.environment.set(\"Token\", jsonData.accessToken);\r",
+              "console.log(pm.environment.get(\"Token\"))"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \r\n    \"username\": \"emilys\",\r\n    \"password\": \"emilyspass\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{dummy_json}}/auth/login",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{dummy_json}}/auth/me",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Products",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let jsonData = pm.response.json();\r",
+              "\r",
+              "pm.environment.set(\"product_id\", jsonData.products[0].id)"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{dummy_json}}/products",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Single Product",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{dummy_json}}/products/{{product_id}}",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "products",
+            "{{product_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "let jsonData = pm.response.json();\r",
+              "pm.test(\"Cart has products\", function(){\r",
+              "    pm.expect(jsonData.products.length).to.be.above(0);\r",
+              "})\r",
+              "\r",
+              "pm.environment.set(\"cart_id\", jsonData.id)\r",
+              "\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userId\": 1,\r\n    \"products\": [\r\n        {\r\n        \"id\": {{product_id}},\r\n        \"quantity\": 4\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{dummy_json}}/carts/add",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "carts",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Cart details",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "let jsonData = pm.response.json();\r",
+              "pm.test(\"Cart total is valid\", function () {\r",
+              "    pm.expect(jsonData.total).to.be.above(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userId\": 1,\r\n    \"products\": [\r\n        {\r\n        \"id\": {{product_id}},\r\n        \"quantity\": 4\r\n        }\r\n    ]\r\n}"
+        },
+        "url": {
+          "raw": "{{dummy_json}}/carts/28",
+          "host": [
+            "{{dummy_json}}"
+          ],
+          "path": [
+            "carts",
+            "28"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
